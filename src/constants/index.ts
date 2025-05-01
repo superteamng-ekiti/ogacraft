@@ -1,0 +1,1 @@
+export const privyAppID = process.env.NEXT_APP_PRIVY_APP_ID;

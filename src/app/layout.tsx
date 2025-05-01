@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { PrivyAuthProvider } from "@/providers/privy-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const interSans = Inter({
   variable: "--font-inter-sans",
@@ -22,7 +24,10 @@ export default function RootLayout({
       <body
         className={`${interSans.variable} antialiased`}
       >
-        {children}
+        <PrivyAuthProvider>
+          {children}
+        </PrivyAuthProvider>
+        <Toaster richColors />
       </body>
     </html>
   );
