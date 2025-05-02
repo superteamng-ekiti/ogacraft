@@ -4,7 +4,7 @@ import { HeaderMenuItem } from "./header-menu-item";
 
 export const HeaderMenu = ({ menuItems }: { menuItems: MenuItems[] }) => {
   return (
-    <nav className="border border-b p-2 flex items-center gap-3 rounded-xl">
+    <nav className="bg-white shadow-2xl md:shadow-none border border-b p-2 flex items-center gap-3 rounded-xl">
       {menuItems.map((menu) => (
         <HeaderMenuItem menu={menu} key={menu.name} />
       ))}
