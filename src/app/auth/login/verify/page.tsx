@@ -1,12 +1,12 @@
 import React from 'react'
-import { LoginFormWrapper } from './_components/login-form-wrapper'
+import { VerifyForm } from './_components/verify-form'
 
-const Login = () => {
+const LoginVerifyPage = () => {
   return (
     <div className='h-screen w-full px-4 flex items-start pt-24 md:32 justify-center'>
-      <LoginFormWrapper />
+        <VerifyForm />
     </div>
   )
 }
 
-export default Login
+export default LoginVerifyPage
