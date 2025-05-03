@@ -11,26 +11,11 @@ export interface MenuItems {
     link: string;
 }
 
-export const headerMenuItems: MenuItems[] = [
-    {
-        name: "Dashboard",
-        link: "/artisan"
-    },
-    {
-        name: "Jobs",
-        link: "/artisan/jobs"
-    },
-    {
-        name: "Payments",
-        link: "/artisan/payments"
-    },
-    {
-        name: "Reviews",
-        link: "/artisan/reviews"
-    }
-]
+type Headerprops = {
+    headerMenuItems: MenuItems[]
+}
 
-export const Header = () => {
+export const Header = ({ headerMenuItems }: Headerprops) => {
   return (
     <div className='w-full py-3 bg-white border-b border-b-border sticky top-0 z-10'>
         <div className='container px-4 md:px-0 mx-auto flex items-center justify-between'>

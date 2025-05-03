@@ -1,27 +1,29 @@
 import React, { PropsWithChildren } from "react";
-import { Header, MenuItems } from "@/components/header/header";
+import { Header } from "@/components/header/header";
 import { HeaderMenu } from "@/components/header/header-menu";
+import { MenuItems } from "@/components/header/header";
 
 export const headerMenuItems: MenuItems[] = [
   {
     name: 'Dashboard',
-    link: '/artisan',
+    link: '/client',
   },
   {
     name: 'Jobs',
-    link: '/artisan/jobs',
+    link: '/client/jobs',
   },
   {
     name: 'Payments',
-    link: '/artisan/payments',
+    link: '/client/payments',
   },
   {
     name: 'Reviews',
-    link: '/artisan/reviews',
+    link: '/client/reviews',
   },
 ];
 
-const ArtisanDashboardLayout = ({ children }: PropsWithChildren) => {
+const ClientDashboardLayout = ({ children }: PropsWithChildren) => {
+
   return (
     <div className="w-full h-screen bg-light-gray relative overflow-y-auto overflow-x-hidden">
       <Header headerMenuItems={headerMenuItems} />
@@ -34,4 +36,4 @@ const ArtisanDashboardLayout = ({ children }: PropsWithChildren) => {
   );
 };
 
-export default ArtisanDashboardLayout;
+export default ClientDashboardLayout;

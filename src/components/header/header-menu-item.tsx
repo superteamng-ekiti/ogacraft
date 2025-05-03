@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 import { MenuItems } from "./header";
 import Link from "next/link";
