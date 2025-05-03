@@ -4,7 +4,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DropdownMenuLabel } from "@radix-ui/react-dropdown-menu";
+import { DropdownMenuLabel } from "@/components/ui/dropdown-menu"; 
 import { Bell } from "lucide-react";
 import React from "react";
 import { NotificationItem } from "./notification-item";
