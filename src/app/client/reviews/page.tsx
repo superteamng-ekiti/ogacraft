@@ -5,7 +5,7 @@ import { ReviewWrapper } from '../../../components/dashboard/reviews/review-wrap
 const breadcrumbs = [
     {
         title: "Home",
-        link: "/artisan"
+        link: "/client"
     },
     {
         title: "Ratings and Reviews"
