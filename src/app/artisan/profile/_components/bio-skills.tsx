@@ -9,146 +9,103 @@ import { Star } from "lucide-react";
 
 const Bio = () => {
   return (
-    <div className="flex justify-center gap-5 mt-5">
-      {/* Bio */}
-      <div className="gap-5">
-        <div className="bg-white shadow-lg rounded-lg p-6 max-w-md">
+    <div className="flex flex-col md:flex-row justify-center gap-5 mt-5">
+      {/* Left Column */}
+      <div className="md:w-[500px]">
+        {/* Bio Card - Exact desktop size preserved */}
+        <div className="bg-white shadow-lg rounded-lg p-6 md:w-full">
           <h2 className="text-[20px] font-bold mb-4">Bio</h2>
-          <p className="text-gray-700">
+          <p className="text-gray-700 md:text-base text-sm">
             Hi, I’m Blessing — a certified electrician and solar technician
             based in Lagos, with over 5 years of experience helping homes and
             small businesses stay powered and safe.
           </p>
-          <div>
-            <h3 className="text-lg font-semibold mb-4 mt-2">Skills</h3>
+          <div className="mt-4">
+            <h3 className="text-lg font-semibold mb-4">Skills</h3>
             <div className="flex flex-wrap gap-2">
-              <span className="bg-gray-100 px-2 py-1 rounded text-sm font-medium">
-                Woodworking
-              </span>
-              <span className="bg-gray-100 px-2 py-1 rounded text-sm font-medium">
-                Joinery
-              </span>
-              <span className="bg-gray-100 px-2 py-1 rounded text-sm font-medium">
-                Restoration
-              </span>
-              <span className="bg-gray-100 px-2 py-1 rounded text-sm font-medium">
-                Furniture
-              </span>
+              {["Woodworking", "Joinery", "Restoration", "Furniture"].map(
+                (skill) => (
+                  <span
+                    key={skill}
+                    className="bg-gray-100 px-2 py-1 rounded text-sm font-medium"
+                  >
+                    {skill}
+                  </span>
+                )
+              )}
             </div>
           </div>
         </div>
 
-        {/* Skills */}
-        <div className="bg-white shadow-lg rounded-lg p-6 max-w-md mt-6">
+        {/* Project Card - Desktop layout preserved */}
+        <div className="bg-white shadow-lg rounded-lg p-6 mt-6 md:w-full">
           <h2 className="text-[20px] font-bold mb-4">Project</h2>
-          <div className="flex gap-1.5">
-            <Image
-              src={image1}
-              alt="Profile"
-              width={6}
-              height={6}
-              className="w-18 h-18 rounded-md"
-            />
-            <Image
-              src={image2}
-              alt="Profile"
-              width={6}
-              height={6}
-              className="w-18 h-18 rounded-md object-cover"
-            />
-            <Image
-              src={image3}
-              alt="Profile"
-              width={6}
-              height={6}
-              className="w-18 h-18 rounded-md"
-            />
-            <Image
-              src={image4}
-              alt="Profile"
-              width={6}
-              height={6}
-              className="w-18 h-18 rounded-md"
-            />
-            <Image
-              src={image5}
-              alt="Profile"
-              width={6}
-              height={6}
-              className="w-18 h-18 rounded-md"
-            />
+          <div className="flex gap-1.5 overflow-x-auto md:overflow-visible">
+            {[image1, image2, image3, image4, image5].map((img, index) => (
+              <div
+                key={index}
+                className="min-w-[72px] md:w-18 h-18 flex-shrink-0"
+              >
+                <Image
+                  src={img}
+                  alt="Project"
+                  className="w-full h-full rounded-md object-cover"
+                  width={72}
+                  height={72}
+                />
+              </div>
+            ))}
           </div>
         </div>
       </div>
-      {/* Client review */}
-      <div className="bg-white shadow-lg rounded-lg p-6 max-w-md ">
-        <div className="flex justify-between">
-          <h2 className="text-[20px] font-bold mb-4">Client review</h2>
-          <div>
-            <div className="flex gap-1">
-              {[...Array(1)].map((_, i) => (
-                <Star
-                  key={i}
-                  size={20}
-                  className="text-yellow-500"
-                  fill="currentColor"
-                />
-              ))}
-              <div>4.8</div>
+
+      {/* Right Column - Client Reviews (Desktop exact size) */}
+      <div className="md:w-[500px] bg-white shadow-lg rounded-lg p-6">
+        <div className="flex justify-between items-start">
+          <h2 className="text-[20px] font-bold">Client review</h2>
+          <div className="text-right">
+            <div className="flex items-center gap-1">
+              <Star size={20} className="text-yellow-500" fill="currentColor" />
+              <span>4.8</span>
             </div>
-            <div>13 review</div>
+            <div className="text-sm">13 reviews</div>
           </div>
         </div>
-        {/* review 2 */}
-        <div className="mt-7">
-          <div className="flex justify-between">
-            <h2 className="text-[15px] font-medium mb-4">Jennifer Wilson</h2>
-            <div>
-              <div className="flex gap-1">
-                {[...Array(4)].map((_, i) => (
-                  <Star
-                    key={i}
-                    size={20}
-                    className="text-yellow-500"
-                    fill="currentColor"
-                  />
-                ))}
+
+        {/* Reviews - Desktop spacing maintained */}
+        <div className="space-y-7 mt-6">
+          {[1, 2].map((_, index) => (
+            <div key={index}>
+              <div className="flex justify-between items-center">
+                <h3 className="text-[15px] font-medium">Jennifer Wilson</h3>
+                <div className="flex gap-1">
+                  {[...Array(4)].map((_, i) => (
+                    <Star
+                      key={i}
+                      size={20}
+                      className="text-yellow-500"
+                      fill="currentColor"
+                    />
+                  ))}
+                </div>
+              </div>
+              <p className="mt-2 text-gray-600">
+                Musa created a stunning dining table for our family. The
+                craftsmanship is exceptional, and he was incredibly patient
+                throughout the design.
+              </p>
+              <div className="mt-2 text-right text-sm text-gray-500">
+                March 15, 2025
               </div>
             </div>
-          </div>
-          <div>
-            Musa created a stunning dining table for our family. The
-            craftsmanship is exceptional, and he was incredibly patient
-            throughout the design.
-          </div>
-          <div className="flex justify-end">March 15, 2025</div>
+          ))}
         </div>
-        {/* review 3 */}
-        <div className="mt-7">
-          <div className="flex justify-between">
-            <h2 className="text-[15px] font-medium mb-4">Jennifer Wilson</h2>
-            <div>
-              <div className="flex gap-1">
-                {[...Array(4)].map((_, i) => (
-                  <Star
-                    key={i}
-                    size={20}
-                    className="text-yellow-500"
-                    fill="currentColor"
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-          <div>
-            Musa created a stunning dining table for our family. The
-            craftsmanship is exceptional, and he was incredibly patient
-            throughout the design.
-          </div>
-          <div className="flex justify-end">March 15, 2025</div>
-        </div>
-        {/* more views */}
-        <div className="flex justify-center border border-[#E8E8E8] mt-5">
+
+        {/* View All Button - Desktop exact style */}
+        <div
+          className="mt-6 border border-[#E8E8E8] rounded-md py-2 text-center 
+                        hover:bg-gray-50 transition-colors cursor-pointer"
+        >
           View all 13 reviews
         </div>
       </div>
