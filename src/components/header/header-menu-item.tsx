@@ -10,6 +10,7 @@ export const HeaderMenuItem = ({ menu }: { menu: MenuItems }) => {
   return (
     <Link
       href={menu.link}
+      prefetch={false}
       className={cn("py-1.5 px-3 rounded-md hover:bg-black hover:text-white font-medium", pathname === menu.link ? "bg-black text-white" : "text-black bg-white")}
     >
       {menu.name}

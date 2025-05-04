@@ -9,6 +9,10 @@ export const headerMenuItems: MenuItems[] = [
     link: '/client',
   },
   {
+    name: 'Artisans',
+    link: '/client/artisans',
+  },
+  {
     name: 'Jobs',
     link: '/client/jobs',
   },
