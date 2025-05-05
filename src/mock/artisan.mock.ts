@@ -1,4 +1,4 @@
-interface Artisan {
+export interface Artisan {
   first_name: string;
   last_name: string;
   job: string;
