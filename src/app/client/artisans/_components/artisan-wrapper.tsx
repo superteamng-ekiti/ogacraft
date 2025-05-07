@@ -101,7 +101,7 @@ const ArtisanWrapper = () => {
       <div className="w-full h-[calc(100vh_-_21.5rem)] md:h-[calc(100vh_-_16rem)] mt-6">
         <div className="flex flex-col md:flex-row gap-4 relative">
           <div className="relative w-full md:w-[321px]">
-            <div className="static md:sticky md:top-[0px] h-full flex flex-col gap-4 w-full md:w-[321px] px-2 md:overflow-y-auto">
+            <div className="static md:sticky md:top-[0px] h-full flex flex-col gap-4 w-full md:w-[240px] px-2 md:overflow-y-auto">
               <h6 className="font-bold">Filters</h6>
 
               <div className="flex flex-col gap-2">

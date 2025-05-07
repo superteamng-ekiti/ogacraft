@@ -7,7 +7,7 @@ interface ArtisanStatusBadgeProps {
 
 export const ArtisanStatusBadge = ({ status } : ArtisanStatusBadgeProps) => {
   return (
-    <span className={cn("px-4 py-1 rounded-md font-medium capitalize", status === "available" && "bg-green-50 text-green-700" )}>
+    <span className={cn("px-4 py-1 rounded-md font-medium capitalize", status === "available" && "bg-green-50 text-green-600" )}>
       {status}
     </span>
   );

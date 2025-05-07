@@ -14,7 +14,7 @@ const ArtisanCard = ({ artisan }: { artisan: Artisan }) => {
           <div className="flex w-full justify-between">
             <div>
               <div className="flex gap-1">
-                <p className="text-lg font-bold">
+                <p className="text-lg font-bold truncate">
                   {artisan.first_name} {artisan.last_name}
                 </p>
                 {artisan.verified && (
@@ -30,7 +30,7 @@ const ArtisanCard = ({ artisan }: { artisan: Artisan }) => {
               <p className="text-sm">{artisan.job}</p>
             </div>
 
-            <div>
+            <div className='flex flex-col items-end'>
               <ArtisanStatusBadge status={artisan.status} />
 
               <div className="flex gap-1 justify-end items-center">
@@ -92,12 +92,12 @@ const ArtisanCard = ({ artisan }: { artisan: Artisan }) => {
         </div>
       </div>
 
-      <div className="flex gap-3.5 md:flex-wrap">
-        <Button variant="outline" className="w-1/2 md:w-auto">
+      <div className="flex gap-3">
+        <Button variant="outline" className="">
           View Profile details
         </Button>
 
-        <Button className="w-1/2 md:w-auto">Send Job request</Button>
+        <Button className="">Send Job request</Button>
       </div>
     </div>
   );
