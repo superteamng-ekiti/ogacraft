@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/input-otp";
 
 import { AuthFormWrapper } from "@/app/auth/_components/auth-form-wrapper";
-import React from "react";
+import React, { useEffect } from "react";
 import { useLoginWithEmail } from "@privy-io/react-auth";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -50,9 +50,9 @@ export const VerifyForm = () => {
       } else {
         await refetch();
 
-        if (data) {
-          router.push(`/${data.account_type ?? ""}`);
-        }
+        // if (data) {
+        //   router.push(`/${data.account_type ?? ""}`);
+        // }
       }
     },
   });
@@ -65,6 +65,12 @@ export const VerifyForm = () => {
       pin: "",
     },
   });
+
+  useEffect(() => {
+    if(data) {
+      router.push(`/${data.account_type ?? ""}`);
+    }
+  }, [data])
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
