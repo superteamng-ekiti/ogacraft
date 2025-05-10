@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import { Camera } from "lucide-react";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -26,6 +26,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useAuth } from "@/hooks/services/auth";
+import { useUser } from "@privy-io/react-auth";
+import { useGetCategories } from "@/hooks/services/categories";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   firstname: z.string().min(2).max(50),
@@ -33,31 +38,78 @@ const formSchema = z.object({
   skill: z.string().min(2).max(50),
   yearsOfExperience: z.string().min(2).max(50),
   location: z.string().min(2).max(50),
+  gender: z.string(),
 });
 
 export const ProfileCompletionForm = () => {
+  const { mutate, status } = useAuth();
+
+  const { isLoading, data } = useGetCategories();
+
+  const router = useRouter();
+
+  const { user } = useUser();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstname: "",
-      lastname: "",
+      firstname: user?.google?.name ? user?.google?.name.split(" ")[0] : "",
+      lastname: user?.google?.name ? user?.google?.name.split(" ")[1] : "",
       skill: "",
       yearsOfExperience: "",
       location: "",
+      gender: "",
     },
   });
 
+  useEffect(() => {
+    if (user) {
+      form.setValue(
+        "firstname",
+        user?.google?.name ? user?.google?.name.split(" ")[0] : ""
+      );
+      form.setValue(
+        "lastname",
+        user?.google?.name ? user?.google?.name.split(" ")[1] : ""
+      );
+    }
+  }, [form, user]);
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    mutate(
+      {
+        email: user?.google?.email ?? user?.email?.address ?? "",
+        first_name: values.firstname,
+        last_name: values.lastname,
+        categories: values.skill,
+        location: values.location,
+        years_of_experience: values.yearsOfExperience,
+        gender: values.gender,
+        account_type: "artisan"
+      },
+      {
+        onSuccess: () => {
+          router.push(`/auth/sign-up/artisan/welcome`);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onError: (e: any) => {
+          toast.error(e.message);
+        },
+      }
+    );
   }
+
+  const categories = useMemo(() => {
+    if (!data) return [];
+    return data;
+  }, [data]);
+
   return (
     <div className="w-full mt-4">
       <div className="flex items-center justify-center">
         <div className=" w-24 h-24 relative rounded-full">
           <Image
-            src="/images/profile-placeholder.png"
+            src={"/images/profile-placeholder.png"}
             width={96}
             height={96}
             alt="profile placeholder"
@@ -118,13 +170,24 @@ export const ProfileCompletionForm = () => {
                   >
                     <FormControl className="w-full">
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select Skill Category" />
+                        <SelectValue
+                          className="capitalize"
+                          placeholder="Select Skill Category"
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="electrician">Electrician</SelectItem>
-                      <SelectItem value="barber">Barber</SelectItem>
-                      <SelectItem value="dish washer">Dish washer</SelectItem>
+                      {categories.map((category) => {
+                        return (
+                          <SelectItem
+                            className="capitalize"
+                            key={category}
+                            value={category}
+                          >
+                            {category.replaceAll("_", " ")}
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -162,6 +225,31 @@ export const ProfileCompletionForm = () => {
 
             <FormField
               control={form.control}
+              name="gender"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Gender</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl className="w-full">
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select your Gender" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="m">Male</SelectItem>
+                      <SelectItem value="f">Female</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="location"
               render={({ field }) => (
                 <FormItem>
@@ -175,7 +263,16 @@ export const ProfileCompletionForm = () => {
             />
 
             <div className="pt-4">
-              <Button size="lg" className="w-full" type="submit">Continue</Button>
+              <Button
+                disabled={
+                  !form.formState.isValid || status === "pending" || isLoading
+                }
+                size="lg"
+                className="w-full"
+                type="submit"
+              >
+                {status === "pending" ? "Loading..." : "Continue"}
+              </Button>
             </div>
           </form>
         </Form>

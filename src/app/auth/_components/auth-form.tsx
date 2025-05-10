@@ -24,56 +24,34 @@ import { Input } from "@/components/ui/input";
 import { SeperatorWithText } from "@/components/ui/seperator-with-text";
 import Image from "next/image";
 import Link from "next/link";
-import { useLoginWithEmail, useLoginWithOAuth } from "@privy-io/react-auth";
+import {
+  useLoginWithEmail,
+  useLoginWithOAuth,
+  usePrivy,
+} from "@privy-io/react-auth";
 import { toast } from "sonner";
+import { setCustomMetaData } from "@/action/set-custom-metadata";
+// import { useAuth } from "@/hooks/services/auth";
 
-type OtpFlowState =
-| {status: 'initial'}
-| {status: 'error'; error: Error | null}
-| {status: 'sending-code'}
-| {status: 'awaiting-code-input'}
-| {status: 'submitting-code'}
-| {status: 'done'};
+export type OtpFlowState =
+  | { status: "initial" }
+  | { status: "error"; error: Error | null }
+  | { status: "sending-code" }
+  | { status: "awaiting-code-input" }
+  | { status: "submitting-code" }
+  | { status: "done" };
 
 const formSchema = z.object({
   email: z.string().email(),
 });
 
 export const AuthForm = ({ userType }: AuthFormProps) => {
+  const { getAccessToken } = usePrivy();
   const { sendCode, state } = useLoginWithEmail({
     onError: () => {
       toast.error("Failed to send verification code");
-    }
+    },
   });
-
-  const otpState = state as OtpFlowState;
-  
-  const router = useRouter();
-
-  React.useEffect(() => {
-    if (otpState.status === "awaiting-code-input") {
-      router.push(
-        userType === "artisan"
-          ? "/auth/sign-up/artisan/verify"
-          : "/auth/sign-up/client/verify"
-      );
-    }
-  }, [otpState.status, router, userType]);
-
-  const { loading, initOAuth, state: oauthState } = useLoginWithOAuth({
-    onComplete: () => {
-      if (oauthState.status === "done") {
-        router.push(`/auth/sign-up/${userType === "artisan" ? "artisan" : "client"}/profile`);
-      }
-    }
-  });
-
-  // Handle OAuth state changes
-  React.useEffect(() => {
-    if (oauthState.status === "done") {
-      router.push(`/auth/sign-up/${userType === "artisan" ? "artisan" : "client"}/profile`);
-    }
-  }, [oauthState.status, router, userType]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -82,12 +60,57 @@ export const AuthForm = ({ userType }: AuthFormProps) => {
     },
   });
 
+  const otpState = state as OtpFlowState;
+
+  const router = useRouter();
+
+  React.useEffect(() => {
+    if (otpState.status === "awaiting-code-input") {
+      router.push(
+        userType === "artisan"
+          ? "/auth/sign-up/artisan/verify" + `?email=${form.getValues("email")}`
+          : "/auth/sign-up/client/verify" + `?email=${form.getValues("email")}`
+      );
+    }
+  }, [otpState.status, router, userType]);
+
+  const {
+    loading,
+    initOAuth,
+    state: oauthState,
+  } = useLoginWithOAuth({
+    onComplete: async ({ user, isNewUser }) => {
+      const authToken = await getAccessToken();
+      if (isNewUser) {
+        await setCustomMetaData({
+          user_type: userType ?? "artisan",
+          user_id: user.id,
+          accessToken: authToken ?? "",
+        });
+
+        router.push(`/auth/sign-up/${userType}/profile`);
+      } else {
+        router.push(`${userType}`);
+      }
+      // if (oauthState.status === "done") {
+      //   router.push(`/auth/sign-up/${userType === "artisan" ? "artisan" : "client"}/profile`);
+      // }
+    },
+  });
+
+  // Handle OAuth state changes
+  React.useEffect(() => {
+    if (oauthState.status === "done") {
+      router.push(`/auth/sign-up/${userType}/profile`);
+    }
+  }, [oauthState.status, router, userType]);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       sendCode({ email: values.email }).then(() => {
         router.push(
           userType === "artisan"
-            ? "/auth/sign-up/artisan/verify"
+            ? "/auth/sign-up/artisan/verify" + `?email=${values.email}`
             : "/auth/sign-up/client/verify" + `?email=${values.email}`
         );
       });
@@ -126,21 +149,28 @@ export const AuthForm = ({ userType }: AuthFormProps) => {
             disabled={!form.formState.isValid}
             type="submit"
           >
-            {otpState.status === "sending-code" ? "Logging in..." : "Get Started"}
+            {otpState.status === "sending-code"
+              ? "Logging in..."
+              : "Get Started"}
           </Button>
         </form>
       </Form>
 
       <SeperatorWithText />
 
-      <Button onClick={handleGoogleAuth} disabled={loading} variant="outline" className="w-full">
+      <Button
+        onClick={handleGoogleAuth}
+        disabled={loading}
+        variant="outline"
+        className="w-full"
+      >
         <Image
           src="/icons/google.svg"
           alt="google icon"
           width={16}
           height={16}
         />
-        {loading ? 'Logging in...' : 'Sign up with Google'}
+        {loading ? "Logging in..." : "Sign up with Google"}
       </Button>
 
       <div className="flex items-center justify-center gap-2 mt-6">

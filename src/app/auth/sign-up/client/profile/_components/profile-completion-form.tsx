@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import { Camera } from "lucide-react";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -18,28 +18,81 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/hooks/services/auth";
+import { useRouter } from "next/navigation";
+import { useUser } from "@privy-io/react-auth";
+import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
   firstname: z.string().min(2).max(50),
   lastname: z.string().min(2).max(50),
   location: z.string().min(2).max(50),
+  skill: z.string().min(2).max(50),
+  yearsOfExperience: z.string().min(2).max(50),
+  gender: z.string(),
 });
 
 export const ProfileCompletionForm = () => {
+  const { mutate, status } = useAuth();
+
+  const router = useRouter();
+
+  const { user } = useUser();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstname: "",
-      lastname: "",
+      firstname: user?.google?.name ? user?.google?.name.split(" ")[0] : "",
+      lastname: user?.google?.name ? user?.google?.name.split(" ")[1] : "",
+      skill: "",
+      yearsOfExperience: "",
       location: "",
+      gender: "",
     },
   });
 
+  useEffect(() => {
+    if (user) {
+      form.setValue(
+        "firstname",
+        user?.google?.name ? user?.google?.name.split(" ")[0] : ""
+      );
+      form.setValue(
+        "lastname",
+        user?.google?.name ? user?.google?.name.split(" ")[1] : ""
+      );
+    }
+  }, [form, user]);
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    mutate(
+      {
+        email: user?.google?.email ?? user?.email?.address ?? "",
+        first_name: values.firstname,
+        last_name: values.lastname,
+        location: values.location,
+        gender: values.gender,
+        account_type: "client"
+      },
+      {
+        onSuccess: () => {
+          router.push(`/auth/sign-up/client/welcome`);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onError: (e: any) => {
+          toast.error(e.message);
+        },
+      }
+    );
   }
+
   return (
     <div className="w-full mt-4">
       <div className="flex items-center justify-center">
@@ -96,6 +149,31 @@ export const ProfileCompletionForm = () => {
 
             <FormField
               control={form.control}
+              name="gender"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Gender</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl className="w-full">
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select your Gender" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="m">Male</SelectItem>
+                      <SelectItem value="f">Female</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="location"
               render={({ field }) => (
                 <FormItem>
@@ -109,7 +187,14 @@ export const ProfileCompletionForm = () => {
             />
 
             <div className="pt-4">
-              <Button size="lg" className="w-full" type="submit">Continue</Button>
+              <Button
+                disabled={!form.formState.isValid || status === "pending"}
+                size="lg"
+                className="w-full"
+                type="submit"
+              >
+                {status === "pending" ? "Loading..." : "Continue"}
+              </Button>
             </div>
           </form>
         </Form>

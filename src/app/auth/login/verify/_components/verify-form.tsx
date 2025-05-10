@@ -24,6 +24,9 @@ import React from "react";
 import { useLoginWithEmail } from "@privy-io/react-auth";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+import Link from "next/link";
+import { useGetUserByEmail } from "@/hooks/services/user";
+import { OtpFlowState } from "@/app/auth/_components/auth-form";
 
 const FormSchema = z.object({
   pin: z.string().min(6, {
@@ -32,21 +35,29 @@ const FormSchema = z.object({
 });
 
 export const VerifyForm = () => {
-
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const email = searchParams.get('email')
+  const email = searchParams.get("email");
 
-  const { loginWithCode } = useLoginWithEmail({
-    onComplete({ isNewUser }) {
+  const { data, refetch } = useGetUserByEmail(email ?? "");
+
+  const { loginWithCode, state } = useLoginWithEmail({
+    onComplete: async ({ isNewUser }) => {
       if (isNewUser) {
-        router.push("/auth/sign-up/client/profile")
+        toast.error("User not found");
+        router.push("/auth/login");
       } else {
-        router.push("/client")
+        await refetch();
+
+        if (data) {
+          router.push(`/${data.account_type ?? ""}`);
+        }
       }
     },
   });
+
+  const otpState = state as OtpFlowState;
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -58,12 +69,14 @@ export const VerifyForm = () => {
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       await loginWithCode({
-        code: data.pin
-      })
+        code: data.pin,
+      });
     } catch {
-      toast("Something went wrong")
+      toast.error("Something went wrong");
     }
   }
+
+  console.log("data", data);
 
   return (
     <AuthFormWrapper
@@ -103,7 +116,21 @@ export const VerifyForm = () => {
             )}
           />
 
-          <Button size="lg" className="w-full" type="submit">Verify</Button>
+          <Button size="lg" className="w-full" type="submit">
+            {otpState.status === "submitting-code" ? "Loading..." : "Verify"}
+          </Button>
+
+          <div className="flex items-center justify-center gap-2 mt-6">
+            <span className="text-sm text-gray-700">
+              Not having an account?
+            </span>
+            <Link
+              href="/auth/login"
+              className="text-sm font-semibold text-primary"
+            >
+              Sign up
+            </Link>
+          </div>
         </form>
       </Form>
     </AuthFormWrapper>

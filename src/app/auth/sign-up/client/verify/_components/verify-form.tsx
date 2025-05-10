@@ -22,9 +22,10 @@ import {
 import { AuthFormWrapper } from "@/app/auth/_components/auth-form-wrapper";
 import React from "react";
 import Link from "next/link";
-import { useLoginWithEmail } from "@privy-io/react-auth";
+import { getAccessToken, useLoginWithEmail } from "@privy-io/react-auth";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+import { setCustomMetaData } from "@/action/set-custom-metadata";
 
 const FormSchema = z.object({
   pin: z.string().min(6, {
@@ -40,11 +41,19 @@ export const VerifyForm = () => {
   const email = searchParams.get('email')
 
   const { loginWithCode } = useLoginWithEmail({
-    onComplete({ isNewUser }) {
+    onComplete: async ({ isNewUser, user }) => {
+      const authToken = await getAccessToken();
+
       if (isNewUser) {
-        router.push("/auth/sign-up/client/profile")
+        await setCustomMetaData({
+          user_type: "client",
+          user_id: user.id,
+          accessToken: authToken ?? "",
+        });
+
+        router.push("/auth/sign-up/client/profile");
       } else {
-        router.push("/client")
+        router.push("/client");
       }
     },
   });
@@ -62,7 +71,7 @@ export const VerifyForm = () => {
         code: data.pin
       })
     } catch {
-      toast("Something went wrong")
+      toast.error("Something went wrong")
     }
   }
 

@@ -36,6 +36,12 @@ const formSchema = z.object({
 
 export const LoginForm = () => {
   const { sendCode, state } = useLoginWithEmail({
+    // onComplete: ({ isNewUser, user }) => {
+    //   if (isNewUser) {
+    //     return toast.error("User not found");
+    //   }
+    //   console.log(user, "user");
+    // },
     onError: () => {
       toast.error("Failed to send verification code");
     },
@@ -45,27 +51,28 @@ export const LoginForm = () => {
 
   const router = useRouter();
 
-  React.useEffect(() => {
-    if (otpState.status === "awaiting-code-input") {
-      router.push("/auth/sign-up/client/verify");
-    }
-  }, [otpState.status, router]);
+  // React.useEffect(() => {
+  //   if (otpState.status === "awaiting-code-input") {
+  //     router.push("/auth/sign-up/client/verify");
+  //   }
+  // }, [otpState.status, router]);
 
   const { loading, initOAuth } = useLoginWithOAuth({
     onComplete: ({ isNewUser }) => {
       if (isNewUser) {
-        return router.push("/auth/sign-up/client/profile");
+        // return router.push(`/auth/sign-up/${user?.customMetadata?.user_type ?? ""}/profile`);
+        return toast.error("User not found");
       }
-      router.push(`/client`);
+      return router.push(`/user?.customMetadata?.user_type ?? ""`);
     },
   });
 
   // Handle OAuth state changes
-  //   React.useEffect(() => {
-  //     if (oauthState.status === "done") {
-  //       router.push(`/client`);
-  //     }
-  //   }, [oauthState.status, router]);
+    React.useEffect(() => {
+      if (otpState.status === "awaiting-code-input") {
+        router.push(`/auth/login/verify?email=${form.getValues("email")}`);
+      }
+    }, [otpState.status, router]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -76,17 +83,18 @@ export const LoginForm = () => {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      sendCode({ email: values.email }).then(() => {
-        router.push("/auth/sign-up/client/verify" + `?email=${values.email}`);
-      });
-    } catch {
-      toast("Something went wrong");
+      sendCode({ email: values.email, disableSignup: true }).then(() => {
+        router.push("/auth/login/verify" + `?email=${values.email}`)
+      })
+    } catch(error) {
+      console.log("error", error);
+      toast.error("Something went wrong");
     }
   }
 
   async function handleGoogleAuth() {
     try {
-      await initOAuth({ provider: "google" });
+      await initOAuth({ provider: "google", disableSignup: true });
     } catch {
       toast.error("Failed to authenticate with Google");
     }
