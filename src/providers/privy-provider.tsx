@@ -12,7 +12,7 @@ export const PrivyAuthProvider = ({ children }: PrivyProviderProps) => {
   return (
     <PrivyProvider
     //   appId={privyAppID ?? ""}
-      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID}
+      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID ?? ""}
       config={{
         appearance: {
           showWalletLoginFirst: false,
