@@ -146,7 +146,7 @@ export const LoginForm = () => {
 
       <div className="flex items-center justify-center gap-2 mt-6">
         <span className="text-sm text-gray-700">Not having an account?</span>
-        <Link href="/auth/login" className="text-sm font-semibold text-primary">
+        <Link href="/auth/signup" className="text-sm font-semibold text-primary">
           Sign up
         </Link>
       </div>
