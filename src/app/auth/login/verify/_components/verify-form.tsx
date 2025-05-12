@@ -21,7 +21,7 @@ import {
 
 import { AuthFormWrapper } from "@/app/auth/_components/auth-form-wrapper";
 import React, { useEffect } from "react";
-import { useLoginWithEmail } from "@privy-io/react-auth";
+import { useLoginWithEmail, usePrivy } from "@privy-io/react-auth";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -37,6 +37,8 @@ const FormSchema = z.object({
 export const VerifyForm = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  const { ready, authenticated } = usePrivy();
 
   const email = searchParams.get("email");
 
@@ -67,10 +69,10 @@ export const VerifyForm = () => {
   });
 
   useEffect(() => {
-    if(data) {
+    if(ready && authenticated && data) {
       router.push(`/${data.account_type ?? ""}`);
     }
-  }, [data])
+  }, [authenticated, data, ready, router])
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
@@ -81,8 +83,6 @@ export const VerifyForm = () => {
       toast.error("Something went wrong");
     }
   }
-
-  console.log("data", data);
 
   return (
     <AuthFormWrapper

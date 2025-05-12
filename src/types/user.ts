@@ -1,13 +1,22 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { AccountType, Gender } from "@/constants/user.constant";
+
+export type AccountType = (typeof AccountType)[keyof typeof AccountType];
+export type Gender = (typeof Gender)[keyof typeof Gender];
+
+export type Review = {
+  rating: number;
+  description: string;
+};
+
 export interface User {
-    account_type: string;
-    categories: string[];
-    email: string;
-    first_name: string;
-    last_name: string;
-    gender: string;
-    location: string;
-    projects: any;
-    reviews: any;
-    _id: string; 
+  _id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  gender: Gender;
+  account_type: AccountType;
+  location: string;
+  categories: string[];
+  projects: string[];
+  reviews: Review[];
 }

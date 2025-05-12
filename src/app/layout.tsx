@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { PrivyAuthProvider } from "@/providers/privy-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { QueryProvider } from "@/provider/query-provider";
+import { QueryProvider } from "@/providers/query-provider";
 import 'react-day-picker/style.css';
 
 const interSans = Inter({
