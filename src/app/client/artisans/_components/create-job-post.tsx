@@ -1,22 +1,44 @@
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React from 'react'
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { DayPicker } from 'react-day-picker';
+
 
 const formSchema = z.object({
-  title: z.string().min(4, { message: 'Title must be at least 4 characters long' }),
+  title: z
+    .string()
+    .min(4, { message: 'Title must be at least 4 characters long' }),
   budget: z.string().min(1, { message: 'Enter budget' }),
   currency: z.string().min(1, { message: 'Select a currency' }),
   deadline: z.string().min(1, { message: 'Select a deadline' }),
 });
 
 const CreateJobPost = () => {
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -28,9 +50,8 @@ const CreateJobPost = () => {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    try { 
-      console.log(values)
-
+    try {
+      console.log(values);
     } catch (error: any) {
       form.reset();
     }
@@ -70,7 +91,7 @@ const CreateJobPost = () => {
                   />
                 </div>
 
-                <div>
+                <div className="flex flex-col md:flex-row gap-4">
                   <div className="w-full md:w-1/2">
                     <FormField
                       control={form.control}
@@ -113,6 +134,32 @@ const CreateJobPost = () => {
                       )}
                     />
                   </div>
+
+                  {/* <div className="w-full md:w-1/2">
+                    <FormField
+                      control={form.control}
+                      name="deadline"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Deadline</FormLabel>
+                          <FormControl>
+                            <DayPicker
+                              animate={true}
+                              mode="single"
+                              selected={
+                                field.value ? new Date(field.value) : undefined
+                              }
+                              onSelect={field.onChange}
+                              className="w-full border border-border rounded-lg"
+                              
+                            />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -130,6 +177,6 @@ const CreateJobPost = () => {
       </DialogContent>
     </Dialog>
   );
-}
+};
 
-export default CreateJobPost
+export default CreateJobPost;
