@@ -42,7 +42,7 @@ export const VerifyForm = () => {
 
   const email = searchParams.get("email");
 
-  const { data, refetch } = useGetUserByEmail(email ?? "");
+  const { data, refetch } = useGetUserByEmail(!!email, email ?? "");
 
   const { loginWithCode, state } = useLoginWithEmail({
     onComplete: async ({ isNewUser }) => {

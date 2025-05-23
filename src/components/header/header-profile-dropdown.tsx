@@ -33,8 +33,6 @@ export const HeaderProfileDrodown = () => {
     await logout();
   };
 
-  console.log("user", user);
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>

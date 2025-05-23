@@ -27,10 +27,8 @@ import Link from "next/link";
 import {
   useLoginWithEmail,
   useLoginWithOAuth,
-  usePrivy,
 } from "@privy-io/react-auth";
 import { toast } from "sonner";
-import { setCustomMetaData } from "@/action/set-custom-metadata";
 // import { useAuth } from "@/hooks/services/auth";
 
 export type OtpFlowState =
@@ -46,7 +44,6 @@ const formSchema = z.object({
 });
 
 export const AuthForm = ({ userType }: AuthFormProps) => {
-  const { getAccessToken } = usePrivy();
   const { sendCode, state } = useLoginWithEmail({
     onError: () => {
       toast.error("Failed to send verification code");
@@ -79,15 +76,8 @@ export const AuthForm = ({ userType }: AuthFormProps) => {
     initOAuth,
     state: oauthState,
   } = useLoginWithOAuth({
-    onComplete: async ({ user, isNewUser }) => {
-      const authToken = await getAccessToken();
+    onComplete: async ({ isNewUser }) => {
       if (isNewUser) {
-        await setCustomMetaData({
-          user_type: userType ?? "artisan",
-          user_id: user.id,
-          accessToken: authToken ?? "",
-        });
-
         router.push(`/auth/sign-up/${userType}/profile`);
       } else {
         router.push(`${userType}`);

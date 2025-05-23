@@ -22,10 +22,9 @@ import {
 import { AuthFormWrapper } from "@/app/auth/_components/auth-form-wrapper";
 import React from "react";
 import Link from "next/link";
-import { getAccessToken, useLoginWithEmail } from "@privy-io/react-auth";
+import { useLoginWithEmail } from "@privy-io/react-auth";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { setCustomMetaData } from "@/action/set-custom-metadata";
 import { OtpFlowState } from "@/app/auth/_components/auth-form";
 
 const FormSchema = z.object({
@@ -41,16 +40,9 @@ export const VerifyForm = () => {
   const email = searchParams.get("email");
 
   const { loginWithCode, state } = useLoginWithEmail({
-    onComplete: async ({ isNewUser, user }) => {
-      const authToken = await getAccessToken();
+    onComplete: async ({ isNewUser }) => {
 
       if (isNewUser) {
-        await setCustomMetaData({
-          user_type: "artisan",
-          user_id: user.id,
-          accessToken: authToken ?? "",
-        });
-
         router.push("/auth/sign-up/artisan/profile");
       } else {
         router.push("/artisan");

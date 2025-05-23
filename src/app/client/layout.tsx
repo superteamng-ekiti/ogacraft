@@ -4,6 +4,9 @@ import { HeaderMenu } from "@/components/header/header-menu";
 import { MenuItems } from "@/components/header/header";
 import { UserProvider } from "@/context/user.context";
 import { AuthCheckProvider } from "@/providers/auth-check-provider";
+// import { getAuthenticatedUser } from "@/utils/auth";
+// import { redirect } from "next/navigation";
+// import { usePrivy } from "@privy-io/react-auth";
 
 export const headerMenuItems: MenuItems[] = [
   {
@@ -28,10 +31,10 @@ export const headerMenuItems: MenuItems[] = [
   },
 ];
 
-const ClientDashboardLayout = ({ children }: PropsWithChildren) => {
+const ClientDashboardLayout = async ({ children }: PropsWithChildren) => {
   return (
-    <AuthCheckProvider>
-      <UserProvider>
+    <UserProvider>
+      <AuthCheckProvider>
         <div className="w-full h-screen bg-light-gray relative overflow-y-auto overflow-x-hidden">
           <Header headerMenuItems={headerMenuItems} />
           {children}
@@ -40,8 +43,8 @@ const ClientDashboardLayout = ({ children }: PropsWithChildren) => {
             <HeaderMenu menuItems={headerMenuItems} />
           </div>
         </div>
-      </UserProvider>
-    </AuthCheckProvider>
+      </AuthCheckProvider>
+    </UserProvider>
   );
 };
 
