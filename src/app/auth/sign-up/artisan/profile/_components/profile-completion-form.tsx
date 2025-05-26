@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import { Camera } from "lucide-react";
 import Image from "next/image";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -18,7 +18,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
 import {
   Select,
   SelectContent,
@@ -26,9 +25,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
+import { FormCategorySelector } from "@/components/ui/category-selector";
 import { useAuth } from "@/hooks/services/auth";
 import { useUser } from "@privy-io/react-auth";
-import { useGetCategories } from "@/hooks/services/categories";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -44,7 +44,7 @@ const formSchema = z.object({
 export const ProfileCompletionForm = () => {
   const { mutate, status } = useAuth();
 
-  const { isLoading, data } = useGetCategories();
+
 
   const router = useRouter();
 
@@ -99,10 +99,7 @@ export const ProfileCompletionForm = () => {
     );
   }
 
-  const categories = useMemo(() => {
-    if (!data) return [];
-    return data;
-  }, [data]);
+
 
   return (
     <div className="w-full mt-4">
@@ -158,41 +155,12 @@ export const ProfileCompletionForm = () => {
               />
             </div>
 
-            <FormField
+            <FormCategorySelector
               control={form.control}
               name="skill"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Skill Category</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl className="w-full">
-                      <SelectTrigger className="w-full">
-                        <SelectValue
-                          className="capitalize"
-                          placeholder="Select Skill Category"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {categories.map((category) => {
-                        return (
-                          <SelectItem
-                            className="capitalize"
-                            key={category}
-                            value={category}
-                          >
-                            {category.replaceAll("_", " ")}
-                          </SelectItem>
-                        );
-                      })}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Skill Category"
+              placeholder="Select Skill Category"
+              required
             />
 
             <FormField
@@ -265,7 +233,7 @@ export const ProfileCompletionForm = () => {
             <div className="pt-4">
               <Button
                 disabled={
-                  !form.formState.isValid || status === "pending" || isLoading
+                  !form.formState.isValid || status === "pending"
                 }
                 size="lg"
                 className="w-full"

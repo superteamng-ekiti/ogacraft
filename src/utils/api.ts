@@ -2,7 +2,7 @@
 import { getAccessToken } from "@privy-io/react-auth";
 import axios from "axios";
 
-const BASE_URL = "https://ogacraft-backend.onrender.com/api/";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:41817/api/";
 
 class AxiosService {
   private static instance: AxiosService;

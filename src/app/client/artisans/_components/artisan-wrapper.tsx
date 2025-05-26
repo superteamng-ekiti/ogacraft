@@ -14,7 +14,6 @@ const ArtisanWrapper = () => {
           Artisans
         </h3>
 
-        {/* <Button className="w-[208px]">Post a Job</Button> */}
         <CreateJobPost />
       </div>
 

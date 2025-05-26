@@ -4,7 +4,8 @@ import "./globals.css";
 import { PrivyAuthProvider } from "@/providers/privy-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryProvider } from "@/providers/query-provider";
-import 'react-day-picker/style.css';
+import "react-day-picker/dist/style.css"
+import { TooltipProvider } from "@radix-ui/react-tooltip";
 
 const interSans = Inter({
   variable: "--font-inter-sans",
@@ -28,7 +29,9 @@ export default function RootLayout({
       >
         <PrivyAuthProvider>
           <QueryProvider>
+            <TooltipProvider>
             {children}
+            </TooltipProvider>
           </QueryProvider>
         </PrivyAuthProvider>
         <Toaster richColors />
