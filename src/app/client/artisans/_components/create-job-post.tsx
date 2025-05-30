@@ -53,7 +53,11 @@ const formSchema = z.object({
     .optional(),
 });
 
-const CreateJobPost = () => {
+interface CreateJobPostProps {
+  artisan_id?: string;
+}
+
+const CreateJobPost = ({ artisan_id }: CreateJobPostProps) => {
   const { mutate, status } = useCreateJob();
   const imageUploadRef = useRef<(() => Promise<string[]>) | null>(null);
 
@@ -82,40 +86,43 @@ const CreateJobPost = () => {
         imageUrls = await imageUploadRef.current();
       }
 
-      mutate(
-        {
-          title: values.title,
-          description: values.description,
-          categories: values.category,
-          location: values.location,
-          deadline: getUnixTime(values.deadline),
-          budget: values.budget,
-          images: imageUrls,
-          client: user?._id,
+      const jobData = {
+        title: values.title,
+        description: values.description,
+        categories: values.category,
+        location: values.location,
+        deadline: getUnixTime(values.deadline),
+        budget: values.budget,
+        images: imageUrls,
+        artisan_id,
+        client: user?._id,
+        email: user?.email,
+      };
+
+      if (artisan_id) {
+        jobData.artisan_id = artisan_id;
+      }
+
+      mutate(jobData, {
+        onSuccess: () => {
+          toast.success("Job created successfully");
+          form.reset();
         },
-        {
-          onSuccess: () => {
-            toast.success("Job created successfully");
-            form.reset();
-          },
-          onError: (error: unknown) => {
-            // Type guard for error objects
-            const e = error as Error & {
-              response?: {
-                data?: {
-                  message?: string;
-                };
+        onError: (error: unknown) => {
+          // Type guard for error objects
+          const e = error as Error & {
+            response?: {
+              data?: {
+                message?: string;
               };
             };
-            // Try to extract error message from the API response
-            const errorMessage =
-              e?.response?.data?.message ||
-              e?.message ||
-              "Failed to create job";
-            toast.error(errorMessage);
-          },
-        }
-      );
+          };
+          // Try to extract error message from the API response
+          const errorMessage =
+            e?.response?.data?.message || e?.message || "Failed to create job";
+          toast.error(errorMessage);
+        },
+      });
     } catch (error) {
       // Type guard for error objects
       const e = error as Error & {
@@ -135,11 +142,11 @@ const CreateJobPost = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="w-[208px]">Post a Job</Button>
+        <Button className="w-[208px]">{artisan_id ? "Send Job Request" : "Post a Job"}</Button>
       </DialogTrigger>
       <DialogContent className="overflow-y-auto max-h-[90vh] p-3 sm:p-6 w-[min(calc(100%-1rem),95vw)] max-w-full sm:max-w-lg">
         <DialogHeader className="font-bold">
-          Create Job Request Post
+          {artisan_id ? "Send Job Request" : "Post a Job"}
         </DialogHeader>
 
         <Form {...form}>

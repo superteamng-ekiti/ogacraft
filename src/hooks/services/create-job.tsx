@@ -13,6 +13,7 @@ export function useCreateJob() {
       location: string;
       deadline: number;
       budget: string;
+      email?: string;
     }) => api.post<any>(`jobs`, args),
   });
 }

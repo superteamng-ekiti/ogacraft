@@ -1,13 +1,14 @@
 "use client";
 import React, { useMemo, useState } from "react";
-import { JobFilter } from "./job-filter";
 import { Clock, MapPin, WalletCards } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { JobStatusBadge } from "./job-status-badge";
 import { jobs } from "@/mock/jobs.mock";
+import { JobFilter } from "@/components/dashboard/job/job-filter";
+import { JobStatusBadge } from "@/components/dashboard/job/job-status-badge";
+import { JobStatus } from "@/types/job";
 
 export const JobsWrapper = () => {
-  const [filter, setFilter] = useState<string>("all");
+  const [filter, setFilter] = useState<JobStatus | "all">("all");
 
   const filteredJobs = useMemo(() => {
     if (filter === "all") return jobs;
@@ -38,7 +39,9 @@ export const JobsWrapper = () => {
                     <h3 className="text-2xl font-semibold text-black truncate max-w-[260px]">
                       {job.title}
                     </h3>
-                    <p className="text-sm text-gray-600">Client: {job.client}</p>
+                    <p className="text-sm text-gray-600">
+                      Client: {job.client}
+                    </p>
                   </div>
 
                   <JobStatusBadge status={job.status} />
@@ -51,7 +54,9 @@ export const JobsWrapper = () => {
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     <WalletCards size={18} />
-                    <h6 className="text-sm font-bold text-black">{job.budget}</h6>
+                    <h6 className="text-sm font-bold text-black">
+                      {job.budget}
+                    </h6>
                   </div>
                   <div className="flex items-center gap-2">
                     <MapPin size={18} />

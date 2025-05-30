@@ -1,30 +1,92 @@
-'use client';
-import React from 'react';
-import { artisans } from '@/mock/artisan.mock';
-import ArtisanCard from './artisan-card';
-import CreateJobPost from './create-job-post';
-import ArtisanSidebar from './artisan-sidebar';
-
+"use client";
+import React, { useEffect, useMemo } from "react";
+import ArtisanCard from "./artisan-card";
+import CreateJobPost from "./create-job-post";
+import { ArtisanFilterMenu } from "./artisan-filter-menu";
+import { useGetArtisans } from "@/hooks/services/get-artisans";
+import { User } from "@/types/user";
+import { useInView } from "react-intersection-observer";
+import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyArtisanScreen } from "./empty-artisan-screen";
 
 const ArtisanWrapper = () => {
+  const [filters, setFilters] = React.useState({
+    location: null,
+    categories: null,
+    min_rating: null,
+    min_experience: null,
+  });
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useGetArtisans(filters);
+  const { ref, inView } = useInView();
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  useEffect(() => {
+    const handleFilterChange = (event: CustomEvent) => {
+      setFilters(event.detail);
+    };
+
+    window.addEventListener(
+      "artisanFiltersChanged",
+      handleFilterChange as EventListener
+    );
+    return () => {
+      window.removeEventListener(
+        "artisanFiltersChanged",
+        handleFilterChange as EventListener
+      );
+    };
+  }, []);
+
+  const allArtisans = useMemo(
+    () => data?.pages.flatMap((page) => page.artisans) || [],
+    [data]
+  );
+
   return (
     <div className="w-full mt-6 mb-16 md:mb-4">
       <div className="w-full flex items-center justify-between">
-        <h3 className="text-2xl md:text-3xl font-semibold text-black">
-          Artisans
-        </h3>
+        <div className="flex items-center gap-4">
+          <h1 className="text-2xl font-bold">Artisans</h1>
+          <ArtisanFilterMenu />
+        </div>
 
         <CreateJobPost />
       </div>
 
-      <div className="w-full h-[calc(100vh_-_21.5rem)] md:h-[calc(100vh_-_16rem)] mt-6">
+      <div className="mt-8">
         <div className="flex flex-col md:flex-row gap-12 lg:gap-4 relative">
-          <ArtisanSidebar />
-          <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-4 h-auto overflow-y-auto">
-            {artisans.map((artisan, index) => (
-              <ArtisanCard key={index} artisan={artisan} />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-4 h-auto overflow-y-auto">
+              {Array.from({ length: 9 }).map((_, index) => (
+                <Skeleton key={index} className="w-full h-[275px] rounded-xl" />
+              ))}
+            </div>
+          ) : null}
+          {!isLoading && allArtisans.length > 0 ? (
+            <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-4 h-auto overflow-y-auto">
+              {allArtisans.map((artisan: User, index: number) => (
+                <ArtisanCard key={index} artisan={artisan} />
+              ))}
+
+              {/* Loading indicator */}
+              <div ref={ref} className="col-span-3 flex justify-center py-4">
+                {isFetchingNextPage && (
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+                )}
+              </div>
+            </div>
+          ) : null}
+
+          {!isLoading && allArtisans.length === 0 ? (
+            <EmptyArtisanScreen />
+          ) : null}
         </div>
       </div>
     </div>

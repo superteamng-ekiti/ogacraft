@@ -1,7 +1,7 @@
 import React from "react";
-import { JobStatusBadge } from "../../_components/job-status-badge";
 import Image from "next/image";
 import { ClientDetails } from "./client-details";
+import { JobStatusBadge } from "./job-status-badge";
 
 export const JobDetails = () => {
   return (

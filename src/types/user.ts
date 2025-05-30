@@ -24,4 +24,5 @@ export interface User {
   wallet_address: string;
   profile_picture: string;
   years_of_experience: number;
+  averageRating: number;
 }
