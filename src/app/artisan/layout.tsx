@@ -6,27 +6,27 @@ import { AuthCheckProvider } from "@/providers/auth-check-provider";
 
 export const headerMenuItems: MenuItems[] = [
   {
-    name: 'Dashboard',
-    link: '/artisan',
+    name: "Dashboard",
+    link: "/artisan",
   },
   {
-    name: 'Jobs',
-    link: '/artisan/jobs',
+    name: "Jobs",
+    link: "/artisan/jobs",
   },
   {
-    name: 'Payments',
-    link: '/artisan/payments',
+    name: "Payments",
+    link: "/artisan/payments",
   },
   {
-    name: 'Reviews',
-    link: '/artisan/reviews',
+    name: "Reviews",
+    link: "/artisan/reviews",
   },
 ];
 
 const ArtisanDashboardLayout = ({ children }: PropsWithChildren) => {
   return (
-    <AuthCheckProvider>
-      <UserProvider>
+    <UserProvider>
+      <AuthCheckProvider>
         <div className="w-full h-screen bg-light-gray relative overflow-y-auto overflow-x-hidden">
           <Header headerMenuItems={headerMenuItems} />
           {children}
@@ -35,8 +35,8 @@ const ArtisanDashboardLayout = ({ children }: PropsWithChildren) => {
             <HeaderMenu menuItems={headerMenuItems} />
           </div>
         </div>
-      </UserProvider>
-    </AuthCheckProvider>
+      </AuthCheckProvider>
+    </UserProvider>
   );
 };
 

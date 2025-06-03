@@ -70,7 +70,7 @@ const ArtisanWrapper = () => {
             </div>
           ) : null}
           {!isLoading && allArtisans.length > 0 ? (
-            <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-4 h-auto overflow-y-auto">
+            <div className="w-full flex flex-col md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-auto overflow-y-auto">
               {allArtisans.map((artisan: User, index: number) => (
                 <ArtisanCard key={index} artisan={artisan} />
               ))}

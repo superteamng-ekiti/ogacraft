@@ -59,6 +59,7 @@ interface CreateJobPostProps {
 
 const CreateJobPost = ({ artisan_id }: CreateJobPostProps) => {
   const { mutate, status } = useCreateJob();
+  const [open, setOpen] = React.useState(false);
   const imageUploadRef = useRef<(() => Promise<string[]>) | null>(null);
 
   const { user } = useUser();
@@ -107,6 +108,7 @@ const CreateJobPost = ({ artisan_id }: CreateJobPostProps) => {
         onSuccess: () => {
           toast.success("Job created successfully");
           form.reset();
+          setOpen(false);
         },
         onError: (error: unknown) => {
           // Type guard for error objects
@@ -140,12 +142,12 @@ const CreateJobPost = ({ artisan_id }: CreateJobPostProps) => {
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="w-[208px]">{artisan_id ? "Send Job Request" : "Post a Job"}</Button>
+        <Button className="w-full md:w-[208px]">{artisan_id ? "Send Job Request" : "Post a Job"}</Button>
       </DialogTrigger>
-      <DialogContent className="overflow-y-auto max-h-[90vh] p-3 sm:p-6 w-[min(calc(100%-1rem),95vw)] max-w-full sm:max-w-lg">
-        <DialogHeader className="font-bold">
+      <DialogContent className="overflow-y-auto max-h-[90vh] p-3 sm:p-6">
+        <DialogHeader className="font-bold w-full">
           {artisan_id ? "Send Job Request" : "Post a Job"}
         </DialogHeader>
 

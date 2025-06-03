@@ -31,6 +31,7 @@ import { useAuth } from "@/hooks/services/auth";
 import { useUser } from "@privy-io/react-auth";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import LocationSelector from "@/components/form/location-selector";
 
 const formSchema = z.object({
   firstname: z.string().min(2).max(50),
@@ -43,8 +44,6 @@ const formSchema = z.object({
 
 export const ProfileCompletionForm = () => {
   const { mutate, status } = useAuth();
-
-
 
   const router = useRouter();
 
@@ -85,7 +84,7 @@ export const ProfileCompletionForm = () => {
         location: values.location,
         years_of_experience: values.yearsOfExperience,
         gender: values.gender,
-        account_type: "artisan"
+        account_type: "artisan",
       },
       {
         onSuccess: () => {
@@ -98,8 +97,6 @@ export const ProfileCompletionForm = () => {
       }
     );
   }
-
-
 
   return (
     <div className="w-full mt-4">
@@ -216,25 +213,17 @@ export const ProfileCompletionForm = () => {
               )}
             />
 
-            <FormField
+            <LocationSelector
               control={form.control}
               name="location"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Location</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g Ikeja, Lagos, Nigeria" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Location"
+              placeholder="Enter your street address"
+              required
             />
 
             <div className="pt-4">
               <Button
-                disabled={
-                  !form.formState.isValid || status === "pending"
-                }
+                disabled={!form.formState.isValid || status === "pending"}
                 size="lg"
                 className="w-full"
                 type="submit"

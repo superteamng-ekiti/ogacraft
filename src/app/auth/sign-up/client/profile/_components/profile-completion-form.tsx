@@ -29,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import LocationSelector from "@/components/form/location-selector";
 
 const formSchema = z.object({
   firstname: z.string().min(2).max(50),
@@ -79,7 +80,7 @@ export const ProfileCompletionForm = () => {
         last_name: values.lastname,
         location: values.location,
         gender: values.gender,
-        account_type: "client"
+        account_type: "client",
       },
       {
         onSuccess: () => {
@@ -172,18 +173,12 @@ export const ProfileCompletionForm = () => {
               )}
             />
 
-            <FormField
+            <LocationSelector
               control={form.control}
               name="location"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Location</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g Ikeja, Lagos, Nigeria" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Location"
+              placeholder="Enter your street address"
+              required
             />
 
             <div className="pt-4">

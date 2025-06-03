@@ -6,7 +6,7 @@ import CreateJobPost from './create-job-post';
 
 const ArtisanCard = ({ artisan }: { artisan: User }) => {
   return (
-    <div className="w-full border border-border rounded-xl p-6 flex flex-col gap-4">
+    <div className="w-full flex-shrink-0 border border-border rounded-xl p-6 flex flex-col gap-4">
       <div className="flex flex-col gap-3">
         <div className="flex gap-3">
           <Image src={artisan?.profile_picture || "/icons/artisan.svg"} width={51} height={51} alt="user" />
@@ -92,7 +92,7 @@ const ArtisanCard = ({ artisan }: { artisan: User }) => {
         </div>
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex flex-col md:flex-row gap-3">
         <Button variant="outline" className="">
           View Profile details
         </Button>
